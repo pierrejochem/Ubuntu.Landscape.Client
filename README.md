@@ -1,6 +1,6 @@
 #Ubuntu.Landscape.Client
 
-The Ubuntu.Landscape.Client .Net library is doing API calls to the Landscape Server. It is written in C#. The source code will follow soon.
+The Ubuntu.Landscape.Client .Net library is doing API calls to the Landscape Server. It is written in C#.
 
 ###usage
 
