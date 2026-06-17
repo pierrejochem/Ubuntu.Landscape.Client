@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Ubuntu.Landscape.Client/Ubuntu.Landscape.Client.csproj" />
+  <Project Path="tests/Ubuntu.Landscape.Client.Tests/Ubuntu.Landscape.Client.Tests.csproj" />
+</Solution>

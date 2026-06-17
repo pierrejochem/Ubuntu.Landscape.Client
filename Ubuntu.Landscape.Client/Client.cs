@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Security;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -120,38 +118,23 @@ namespace Ubuntu.Landscape
         /// <returns></returns>
         public string getResult()
         {
-            if (this.checkInputs())
+            if (!this.checkInputs()) return null;
+
+            var protocol = (this._sslEnabled) ? "https" : "http";
+            var url = protocol + "://" + this.hostname + "/api/?" + this.requestString();
+
+            var handler = new HttpClientHandler();
+            if (this._ignoreInvalidCerts)
             {
-                string retVal = "{}";
-                using (new ignoreInvalidCerts(this._ignoreInvalidCerts))
-                {
-                    using (WebClient client = new WebClient())
-                    {
-                        var protocol = (this._sslEnabled) ? "https" : "http";
-                        using (Stream data = client.OpenRead(protocol + "://" + this.hostname + "/api/?" + this.requestString()))
-                        {
-                            using (StreamReader reader = new StreamReader(data))
-                            {
-                                try
-                                {
-                                    retVal = reader.ReadToEnd();
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw new Exception(ex.Message, ex);
-                                }
-                                finally
-                                {
-                                    reader.Close();
-                                }
-                            }
-                            data.Close();
-                        }
-                    }
-                }
-                return retVal;
+                handler.ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
-            return null;
+
+            using (handler)
+            using (var client = new HttpClient(handler))
+            {
+                return client.GetStringAsync(url).GetAwaiter().GetResult();
+            }
         }
     }
 }
